@@ -1,0 +1,176 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #fff;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── Top bar ─────────────────────────────── */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #d0d0d0;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  align-self: flex-end;
+}
+
+.tab {
+  padding: 6px 20px;
+  border: 1px solid #c0c0c0;
+  border-radius: 5px 5px 0 0;
+  background: #e0e0e0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  transition: background 0.15s;
+}
+
+.tab:hover {
+  background: #d5d5d5;
+}
+
+.tab.active {
+  background: #fff;
+  color: #111;
+  border-bottom-color: #fff;
+  font-weight: 600;
+}
+
+.clear-filters-btn {
+  padding: 4px 14px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+  transition: background 0.15s;
+}
+
+.clear-filters-btn:hover {
+  background: #f0f0f0;
+}
+
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.theme-selector select {
+  padding: 4px 10px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* ── Table area ──────────────────────────── */
+
+.table-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Larger scrollbars ────────────────────── */
+
+.tabulator-tableholder::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.tabulator-tableholder::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 7px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+.tabulator-tableholder::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+.tabulator-tableholder::-webkit-scrollbar-track {
+  background: #eee;
+  border-radius: 7px;
+}
+
+/* Firefox */
+.tabulator-tableholder {
+  scrollbar-width: auto;
+  scrollbar-color: #bbb #eee;
+}
+
+/* Loading overlay shown during group expand / collapse */
+.table-container.table-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.6);
+  z-index: 10;
+  cursor: wait;
+}
+
+.table-container.table-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  z-index: 11;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Loading / error ─────────────────────── */
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #888;
+}
+
+.status.error {
+  color: #c0392b;
+}

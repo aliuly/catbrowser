@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CatBrowser</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      color: #222;
+      background: #f8f8f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    main {
+      text-align: center;
+      max-width: 480px;
+      padding: 40px 24px;
+    }
+    h1 { font-size: 2rem; margin-bottom: 12px; }
+    p  { color: #555; line-height: 1.6; margin-bottom: 32px; }
+    a  {
+      display: inline-block;
+      padding: 12px 32px;
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    a:hover { background: #1d4ed8; }
+    footer {
+      position: fixed;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>&#x1F431; CatBrowser</h1>
+    <p>
+      Browse and filter cloud service pricing data.
+      Explore thousands of SKUs across regions, service types,
+      and product families with grouped views and live filters.
+    </p>
+    <a href="spa/">Open CatBrowser</a>
+  </main>
+  <footer>Powered by Tabulator &amp; React</footer>
+</body>
+</html>
