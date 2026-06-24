@@ -19,6 +19,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Inject version into landing page
+        run: |
+          VERSION=$(git describe --tags --always 2>/dev/null || echo "dev")
+          echo "Version: $VERSION"
+          sed -i "s/{{VERSION}}/${VERSION}/" html/index.html
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
