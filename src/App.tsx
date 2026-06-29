@@ -20,14 +20,9 @@ import './App.css';
 
 import {
   type PricesData,
-  THEMES,
-  THEME_LINK_ID,
   TABS,
-  STORAGE_KEY,
-  loadTheme,
   flattenRecords,
   buildColumns,
-  getSystemTheme,
 } from './logic';
 
 /* ── Register Tabulator modules ──────────────
@@ -54,7 +49,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(TABS[0].id);
-  const [theme, setTheme] = useState(loadTheme);
 
   const tableRef = useRef<HTMLDivElement>(null);
   const tabulatorRef = useRef<Tabulator | null>(null);
@@ -131,55 +125,6 @@ function App() {
     };
   }, [data, activeTab, allRecords]);
 
-  // ── Theme link management ─────────────────
-
-  useEffect(() => {
-    let link = document.getElementById(THEME_LINK_ID) as HTMLLinkElement | null;
-
-    if (theme === 'default') {
-      // Default theme is already provided by tabulator.min.css
-      if (link) link.remove();
-      return;
-    }
-
-    if (!link) {
-      link = document.createElement('link');
-      link.id = THEME_LINK_ID;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-
-    link.href = `./themes/tabulator_${theme}.min.css`;
-
-    return () => {
-      // Cleanup: remove the link when this effect re-runs or unmounts
-      const el = document.getElementById(THEME_LINK_ID);
-      if (el) el.remove();
-    };
-  }, [theme]);
-
-  // ── React to system colour-scheme changes ─
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      // Only follow system if the user hasn't explicitly chosen a theme
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        setTheme(getSystemTheme());
-      }
-    };
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
-  // ── Theme handler ─────────────────────────
-
-  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const next = e.target.value;
-    setTheme(next);
-    localStorage.setItem(STORAGE_KEY, next);
-  };
-
   const handleClearFilters = () => {
     tabulatorRef.current?.clearFilter(true);
   };
@@ -212,21 +157,6 @@ function App() {
         <button className="clear-filters-btn" onClick={handleClearFilters}>
           Clear filters
         </button>
-
-        <div className="theme-selector">
-          <label htmlFor="theme-select">Theme:</label>
-          <select
-            id="theme-select"
-            value={theme}
-            onChange={handleThemeChange}
-          >
-            {THEMES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
 
       <div ref={tableRef} className="table-container" />

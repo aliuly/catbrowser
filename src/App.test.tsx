@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 // ── Mocks ───────────────────────────────────
 
@@ -80,7 +79,6 @@ describe('App', () => {
     await screen.findByText('Prices');
     expect(screen.getByText('Prices')).toBeInTheDocument();
     expect(screen.getByText('Clear filters')).toBeInTheDocument();
-    expect(screen.getByLabelText('Theme:')).toBeInTheDocument();
   });
 
   it('renders the table container after load', async () => {
@@ -88,30 +86,6 @@ describe('App', () => {
     render(<App />);
     await screen.findByText('Prices');
     expect(document.querySelector('.table-container')).toBeInTheDocument();
-  });
-
-  it('theme dropdown shows all themes', async () => {
-    mockFetchResponse(true, 200, sampleData);
-    render(<App />);
-    await screen.findByText('Prices');
-
-    const select = screen.getByLabelText('Theme:') as HTMLSelectElement;
-    expect(select.value).toBe('default');
-
-    const options = Array.from(select.options).map((o) => o.value);
-    expect(options).toEqual(['default', 'midnight', 'modern', 'simple', 'site']);
-  });
-
-  it('changing theme persists to localStorage', async () => {
-    mockFetchResponse(true, 200, sampleData);
-    const user = userEvent.setup();
-    render(<App />);
-    await screen.findByText('Prices');
-
-    const select = screen.getByLabelText('Theme:');
-    await user.selectOptions(select, 'midnight');
-
-    expect(localStorage.getItem('catbrowser-theme')).toBe('midnight');
   });
 
   it('Clear filters button is present', async () => {

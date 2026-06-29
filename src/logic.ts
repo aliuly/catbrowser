@@ -11,10 +11,6 @@ export interface PricesData {
 
 /* ── Constants ────────────────────────────── */
 
-export const THEMES = ['default', 'midnight', 'modern', 'simple', 'site'] as const;
-
-export const THEME_LINK_ID = 'tabulator-theme-link';
-
 export const NUMERIC_FIELDS = new Set([
   'priceAmount',
   'vCpu',
@@ -60,26 +56,6 @@ export const SELECT_FILTER_FIELDS = new Set([
 ]);
 
 export const TABS = [{ id: 'prices', label: 'Prices' }];
-
-export const STORAGE_KEY = 'catbrowser-theme';
-
-/* ── Helpers ──────────────────────────────── */
-
-/** Query the system colour-scheme preference. */
-export function getSystemTheme(): string {
-  if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'midnight';
-  }
-  return 'default';
-}
-
-/**
- * Return the user-chosen theme, falling back to the system preference
- * ('midnight' for dark mode, 'default' for light).
- */
-export function loadTheme(): string {
-  return localStorage.getItem(STORAGE_KEY) || getSystemTheme();
-}
 
 /* ── Data transformation ──────────────────── */
 

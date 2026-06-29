@@ -4,14 +4,11 @@ import {
   NUMERIC_FIELDS,
   INPUT_FILTER_FIELDS,
   SELECT_FILTER_FIELDS,
-  loadTheme,
-  getSystemTheme,
   flattenRecords,
   buildServiceColumn,
   buildDataColumns,
   orderColumns,
   buildColumns,
-  STORAGE_KEY,
 } from './logic';
 
 /* ── Sample data ──────────────────────────── */
@@ -136,72 +133,6 @@ describe('buildColumns', () => {
     expect(result[0].field).toBe('productId');
     expect(result[0].frozen).toBe(true);
     expect(result[result.length - 1].field).toBe('service');
-  });
-});
-
-describe('getSystemTheme', () => {
-  it("returns 'midnight' when system prefers dark", () => {
-    vi.spyOn(window, 'matchMedia').mockImplementation((query: string) =>
-      ({
-        matches: query === '(prefers-color-scheme: dark)',
-        media: query,
-        onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      }) as MediaQueryList,
-    );
-    expect(getSystemTheme()).toBe('midnight');
-  });
-
-  it("returns 'default' when system prefers light", () => {
-    vi.spyOn(window, 'matchMedia').mockImplementation(() =>
-      ({
-        matches: false,
-        media: '',
-        onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      }) as MediaQueryList,
-    );
-    expect(getSystemTheme()).toBe('default');
-  });
-});
-
-describe('loadTheme', () => {
-  beforeEach(() => {
-    localStorage.clear();
-    // Default to light so the fallback is predictable
-    vi.spyOn(window, 'matchMedia').mockReturnValue({
-      matches: false,
-      media: '',
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as MediaQueryList);
-  });
-
-  it('falls back to system theme (default/light) when nothing is stored', () => {
-    expect(loadTheme()).toBe('default');
-  });
-
-  it('returns the stored theme value', () => {
-    localStorage.setItem(STORAGE_KEY, 'midnight');
-    expect(loadTheme()).toBe('midnight');
-  });
-
-  it('ignores system theme when a stored preference exists', () => {
-    localStorage.setItem(STORAGE_KEY, 'modern');
-    // Even though matchMedia says light, stored wins
-    expect(loadTheme()).toBe('modern');
   });
 });
 
