@@ -1,46 +1,6 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
-import {
-  TabulatorFull as Tabulator,
-  EditModule,
-  FilterModule,
-  FormatModule,
-  SortModule,
-  GroupRowsModule,
-  FrozenColumnsModule,
-  ResizeColumnsModule,
-  ResizeTableModule,
-  MoveColumnsModule,
-  MenuModule,
-} from 'tabulator-tables';
-import type { Options } from 'tabulator-tables';
-
-import 'tabulator-tables/dist/css/tabulator.min.css';
-
-import './App.css';
-
-import {
-  type PricesData,
-  TABS,
-  flattenRecords,
-  buildColumns,
-} from './logic';
-
-/* ── Register Tabulator modules ──────────────
- * TabulatorFull in v6 no longer auto-registers modules;
- * we must import and register the ones we need.       */
-
-Tabulator.registerModule([
-  EditModule,
-  FilterModule,
-  FormatModule,
-  SortModule,
-  GroupRowsModule,
-  FrozenColumnsModule,
-  ResizeColumnsModule,
-  ResizeTableModule,
-  MoveColumnsModule,
-  MenuModule,
-]);
+import { useEffect, useState, useMemo } from 'react';
+import PriceTable from './PriceTable';
+import { type PricesData, TABS, flattenRecords, buildColumns } from './logic';
 
 /* ── Component ────────────────────────────── */
 
@@ -49,11 +9,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(TABS[0].id);
-
-  const tableRef = useRef<HTMLDivElement>(null);
-  const tabulatorRef = useRef<Tabulator | null>(null);
-
-  // ── Fetch data on mount ──────────────────
 
   useEffect(() => {
     fetch('./prices.json')
@@ -71,95 +26,53 @@ function App() {
       });
   }, []);
 
-  // ── Flatten records (stable reference) ───
-
   const allRecords = useMemo(() => {
     if (!data) return [];
     return flattenRecords(data);
   }, [data]);
 
-  // ── Build / rebuild Tabulator ────────────
-
-  useEffect(() => {
-    if (!data || !tableRef.current) return;
-
-    // Only render the table for the Prices tab
-    if (activeTab !== 'prices') return;
-
-    const columns = buildColumns(data.columns);
-
-    const options: Options = {
-      data: allRecords,
-      columns,
-      layout: 'fitData',
-      height: '100%',
-      renderVertical: 'basic',
-      groupBy: 'productId',
-      groupStartOpen: false,
-      groupHeader: (value: unknown, count: number) => `${value} (${count})`,
-    };
-
-    const table = new Tabulator(tableRef.current, options);
-    tabulatorRef.current = table;
-
-    // Show loading overlay during group expand / collapse
-    const container = tableRef.current!;
-    const showLoading = () => container.classList.add('table-loading');
-    const hideLoading = () => container.classList.remove('table-loading');
-
-    // Loading overlay on group toggle
-    const onToggleClick = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest('.tabulator-group-toggle')) {
-        showLoading();
-      }
-    };
-    container.addEventListener('click', onToggleClick, true);
-
-    table.on('renderComplete', hideLoading);
-    table.on('groupVisibilityChanged', hideLoading);
-
-    return () => {
-      container.removeEventListener('click', onToggleClick, true);
-      table.destroy();
-      tabulatorRef.current = null;
-    };
-  }, [data, activeTab, allRecords]);
-
-  const handleClearFilters = () => {
-    tabulatorRef.current?.clearFilter(true);
-  };
-
-  // ── Render ────────────────────────────────
+  const columns = useMemo(() => {
+    if (!data) return [];
+    return buildColumns(data.columns);
+  }, [data]);
 
   if (loading) {
-    return <div className="status">Loading prices.json…</div>;
+    return (
+      <div className="flex items-center justify-center h-screen text-base text-gray-400">
+        Loading prices.json…
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="status error">Failed to load: {error}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen text-base text-red-700">
+        Failed to load: {error}
+      </div>
+    );
   }
 
   return (
-    <div className="app">
-      <div className="top-bar">
-        <div className="tabs">
+    <div className="flex flex-col h-screen font-sans text-sm text-gray-800 bg-white">
+      <div className="flex items-center px-4 py-1.5 bg-gray-100 border-b border-gray-300 shrink-0 gap-4">
+        <div className="flex gap-0.5 self-end">
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              className={`tab${tab.id === activeTab ? ' active' : ''}`}
+              className={`px-5 py-1.5 border border-gray-400 rounded-t cursor-pointer text-xs font-medium transition-colors duration-150 ${
+                tab.id === activeTab
+                  ? 'bg-white text-gray-900 border-b-white font-semibold'
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.label}
             </button>
           ))}
         </div>
-
-        <button className="clear-filters-btn" onClick={handleClearFilters}>
-          Clear filters
-        </button>
       </div>
 
-      <div ref={tableRef} className="table-container" />
+      <PriceTable data={allRecords} columns={columns} />
     </div>
   );
 }

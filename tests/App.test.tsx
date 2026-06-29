@@ -1,22 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-// ── Mocks ───────────────────────────────────
+import App from '../src/App';
 
-vi.mock('tabulator-tables');
-vi.mock('tabulator-tables/dist/css/tabulator.min.css', () => ({}));
-vi.mock('./App.css', () => ({}));
-
-// Now safe to import App (mock is hoisted)
-import App from './App';
-
-/* ── Helpers ──────────────────────────────── */
-
-function mockFetchResponse(
-  ok: boolean,
-  status: number,
-  body: unknown,
-) {
+function mockFetchResponse(ok: boolean, status: number, body: unknown) {
   vi.spyOn(globalThis, 'fetch').mockResolvedValue({
     ok,
     status,
@@ -25,11 +12,7 @@ function mockFetchResponse(
 }
 
 const sampleData = {
-  columns: {
-    id: 'ID',
-    productId: 'Service ID',
-    productName: 'Product Name',
-  },
+  columns: { id: 'ID', productId: 'Service ID', productName: 'Product Name' },
   services: ['compute'],
   count: 2,
   records: {
@@ -40,11 +23,8 @@ const sampleData = {
   },
 };
 
-/* ── Tests ────────────────────────────────── */
-
 describe('App', () => {
   beforeEach(() => {
-    localStorage.clear();
     vi.restoreAllMocks();
   });
 
@@ -53,7 +33,6 @@ describe('App', () => {
   });
 
   it('shows loading state initially', () => {
-    // fetch never resolves → stays loading
     vi.spyOn(globalThis, 'fetch').mockImplementation(() => new Promise(() => {}));
     render(<App />);
     expect(screen.getByText('Loading prices.json…')).toBeInTheDocument();
@@ -71,27 +50,13 @@ describe('App', () => {
     expect(await screen.findByText(/HTTP 404/)).toBeInTheDocument();
   });
 
-  it('renders top bar after data loads', async () => {
+  it('renders top bar and table after data loads', async () => {
     mockFetchResponse(true, 200, sampleData);
     render(<App />);
 
-    // Wait for loading to finish
     await screen.findByText('Prices');
     expect(screen.getByText('Prices')).toBeInTheDocument();
-    expect(screen.getByText('Clear filters')).toBeInTheDocument();
-  });
-
-  it('renders the table container after load', async () => {
-    mockFetchResponse(true, 200, sampleData);
-    render(<App />);
-    await screen.findByText('Prices');
-    expect(document.querySelector('.table-container')).toBeInTheDocument();
-  });
-
-  it('Clear filters button is present', async () => {
-    mockFetchResponse(true, 200, sampleData);
-    render(<App />);
-    await screen.findByText('Clear filters');
-    expect(screen.getByText('Clear filters')).toBeInTheDocument();
+    expect(document.querySelector('table')).toBeInTheDocument();
+    expect(screen.getByText('VM Small')).toBeInTheDocument();
   });
 });

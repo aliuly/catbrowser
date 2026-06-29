@@ -7,7 +7,7 @@ help: ## Show this help
 
 public/prices.json: price_api.py Makefile
 	@mkdir -p public
-	python3 price_api.py region=eu-de,eu-nl > $@
+	python3 price_api.py > $@
 
 node_modules: package.json
 	npm install
