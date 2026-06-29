@@ -38,7 +38,7 @@ jobs:
         run: pip install requests
 
       - name: Generate prices.json
-        run: python3 price_api.py region=eu-de,eu-nl > public/prices.json
+        run: make public/prices.json
 
       - name: Install npm dependencies
         run: npm ci
