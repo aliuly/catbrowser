@@ -56,7 +56,8 @@ describe('App', () => {
 
     await screen.findByText('Prices');
     expect(screen.getByText('Prices')).toBeInTheDocument();
-    expect(document.querySelector('table')).toBeInTheDocument();
+    // AG Grid renders a div-based grid, not an HTML <table>
+    expect(document.querySelector('.ag-theme-quartz')).toBeInTheDocument();
     expect(screen.getByText('VM Small')).toBeInTheDocument();
   });
 });

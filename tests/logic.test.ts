@@ -43,12 +43,13 @@ describe('buildColumns', () => {
     expect(cols).toHaveLength(6);
   });
 
-  it('last column is the service column', () => {
+  it('last column is the service column (hidden by default)', () => {
     const cols = buildColumns(sampleData.columns);
     const last = cols[cols.length - 1];
     expect(last.id).toBe('service');
     expect(last.header).toBe('Service');
-    expect(last.size).toBe(150);
+    expect(last.size).toBe(120);
+    expect(last.hide).toBe(true);
   });
 
   it('sets tick/cross renderer on isMRC', () => {
